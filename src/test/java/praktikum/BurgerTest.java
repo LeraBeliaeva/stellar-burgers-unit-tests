@@ -1,14 +1,11 @@
 package praktikum;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -37,9 +34,6 @@ public class BurgerTest {
     private Ingredient secondIngredient;
 
     private Burger burger;
-
-    @Rule
-    public ErrorCollector errorCollector = new ErrorCollector();
 
     @Before
     public void setUp() {
@@ -82,41 +76,43 @@ public class BurgerTest {
     }
 
     @Test
-    public void removeIngredientShouldDecreaseSizeAndRemoveCorrectOne() {
+    public void removeIngredientShouldDecreaseSize() {
         burger.addIngredient(firstIngredient);
         burger.addIngredient(secondIngredient);
 
         burger.removeIngredient(0);
 
-        errorCollector.checkThat(
-                "Size should decrease to 1",
-                burger.getIngredients().size(),
-                is(1)
-        );
-        errorCollector.checkThat(
-                "The remaining ingredient should be secondIngredient",
-                burger.getIngredients().get(0),
-                is(secondIngredient)
-        );
+        assertEquals(1, burger.getIngredients().size());
     }
 
     @Test
-    public void moveIngredientShouldChangeOrder() {
+    public void removeIngredientShouldRemoveCorrectOne() {
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
+
+        burger.removeIngredient(0);
+
+        assertEquals(secondIngredient, burger.getIngredients().get(0));
+    }
+
+    @Test
+    public void moveIngredientShouldPlaceSecondAtFirstPosition() {
         burger.addIngredient(firstIngredient);
         burger.addIngredient(secondIngredient);
 
         burger.moveIngredient(0, 1);
 
-        errorCollector.checkThat(
-                "Position 0 should contain secondIngredient",
-                burger.getIngredients().get(0),
-                is(secondIngredient)
-        );
-        errorCollector.checkThat(
-                "Position 1 should contain firstIngredient",
-                burger.getIngredients().get(1),
-                is(firstIngredient)
-        );
+        assertEquals(secondIngredient, burger.getIngredients().get(0));
+    }
+
+    @Test
+    public void moveIngredientShouldPlaceFirstAtSecondPosition() {
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
+
+        burger.moveIngredient(0, 1);
+
+        assertEquals(firstIngredient, burger.getIngredients().get(1));
     }
 
     @Test

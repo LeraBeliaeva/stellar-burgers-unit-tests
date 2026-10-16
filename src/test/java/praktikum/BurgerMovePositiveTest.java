@@ -1,9 +1,7 @@
 package praktikum;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -14,7 +12,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 @RunWith(Parameterized.class)
 public class BurgerMovePositiveTest {
@@ -37,9 +36,6 @@ public class BurgerMovePositiveTest {
 
     private Burger burger;
     private Ingredient[] allIngredients;
-
-    @Rule
-    public ErrorCollector errorCollector = new ErrorCollector();
 
     public BurgerMovePositiveTest(String scenarioName, int fromIndex, int toIndex, int[] expectedOrder) {
         this.scenarioName = scenarioName;
@@ -73,58 +69,36 @@ public class BurgerMovePositiveTest {
     }
 
     @Test
+    public void moveIngredientShouldKeepSize() {
+        burger.moveIngredient(fromIndex, toIndex);
+
+        assertEquals(INGREDIENTS_COUNT, burger.getIngredients().size());
+    }
+
+    @Test
     public void moveIngredientShouldChangeOrder() {
         burger.moveIngredient(fromIndex, toIndex);
 
         List<Ingredient> result = burger.getIngredients();
 
-        errorCollector.checkThat(
-                "Size should stay the same after moving",
-                result.size(),
-                is(INGREDIENTS_COUNT)
-        );
-
-        errorCollector.checkThat(
-                "Result size should match expected order",
-                result.size(),
-                is(expectedOrder.length)
-        );
-
         for (int i = 0; i < expectedOrder.length; i++) {
-            errorCollector.checkThat(
-                    "Position " + i + " should contain ingredient from original index " + expectedOrder[i],
-                    result.get(i),
-                    is(allIngredients[expectedOrder[i]])
-            );
+            assertSame(allIngredients[expectedOrder[i]], result.get(i));
         }
     }
 
     @Test
-    public void moveIngredientShouldKeepSizeAndPosition() {
+    public void moveIngredientShouldKeepAllIngredients() {
         burger.moveIngredient(fromIndex, toIndex);
 
-        List<Ingredient> result = burger.getIngredients();
         Ingredient movedIngredient = allIngredients[fromIndex];
-
         int occurrences = 0;
-        int actualPosition = -1;
 
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i) == movedIngredient) {
+        for (Ingredient ingredient : burger.getIngredients()) {
+            if (ingredient == movedIngredient) {
                 occurrences++;
-                actualPosition = i;
             }
         }
 
-        errorCollector.checkThat(
-                "Moved ingredient should appear exactly once",
-                occurrences,
-                is(1)
-        );
-        errorCollector.checkThat(
-                "Moved ingredient should be at position " + toIndex,
-                actualPosition,
-                is(toIndex)
-        );
+        assertEquals(1, occurrences);
     }
 }

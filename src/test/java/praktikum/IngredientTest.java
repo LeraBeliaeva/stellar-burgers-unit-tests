@@ -1,9 +1,7 @@
 package praktikum;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -11,8 +9,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Parameterized.class)
 public class IngredientTest {
@@ -25,9 +23,6 @@ public class IngredientTest {
     private final float price;
 
     private Ingredient ingredient;
-
-    @Rule
-    public ErrorCollector errorCollector = new ErrorCollector();
 
     public IngredientTest(String scenarioName, IngredientType type, String name, float price) {
         this.scenarioName = scenarioName;
@@ -55,26 +50,22 @@ public class IngredientTest {
     }
 
     @Test
-    public void ingredientShouldReturnCorrectProperties() {
-        errorCollector.checkThat(
-                "Ingredient should not be null",
-                ingredient,
-                notNullValue()
-        );
-        errorCollector.checkThat(
-                "Scenario: " + scenarioName + " - Type mismatch",
-                ingredient.getType(),
-                is(type)
-        );
-        errorCollector.checkThat(
-                "Scenario: " + scenarioName + " - Name mismatch",
-                ingredient.getName(),
-                is(name)
-        );
-        errorCollector.checkThat(
-                "Scenario: " + scenarioName + " - Price mismatch",
-                ingredient.getPrice(),
-                is(price)
-        );
+    public void ingredientShouldNotBeNull() {
+        assertNotNull(ingredient);
+    }
+
+    @Test
+    public void ingredientShouldReturnCorrectType() {
+        assertEquals(type, ingredient.getType());
+    }
+
+    @Test
+    public void ingredientShouldReturnCorrectName() {
+        assertEquals(name, ingredient.getName());
+    }
+
+    @Test
+    public void ingredientShouldReturnCorrectPrice() {
+        assertEquals(price, ingredient.getPrice(), DELTA);
     }
 }

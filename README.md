@@ -61,20 +61,18 @@ src/
     └── IngredientTest.java
 ```
 
-## Тестовые классы
-
 | Класс | Количество тестов | Описание |
 |-------|-------------------|----------|
-| `BurgerTest` | 13 | Основные методы `Burger` |
+| `BurgerTest` | 15 | Основные методы `Burger` |
 | `BurgerPriceParameterizedTest` | 6 | Параметризованные тесты цены |
-| `BurgerRemovePositiveTest` | 3 | Удаление (позитивные) |
+| `BurgerRemovePositiveTest` | 6 | Удаление (позитивные) |
 | `BurgerRemoveNegativeTest` | 8 | Удаление (невалидные индексы) |
-| `BurgerMovePositiveTest` | 14 | Перемещение (позитивные) |
+| `BurgerMovePositiveTest` | 21 | Перемещение (позитивные) |
 | `BurgerMoveNegativeTest` | 5 | Перемещение (невалидные индексы) |
 | `BunTest` | 8 | Параметризованные тесты булочек |
-| `IngredientTest` | 7 | Параметризованные тесты ингредиентов |
+| `IngredientTest` | 28 | Параметризованные тесты ингредиентов |
 
-**Итого: 64 теста**
+**Итого: 97 тестов**
 
 ## 📊 Покрытие кода
 

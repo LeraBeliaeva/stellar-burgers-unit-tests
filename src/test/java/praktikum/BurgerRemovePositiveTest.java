@@ -1,9 +1,7 @@
 package praktikum;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -14,7 +12,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 @RunWith(Parameterized.class)
 public class BurgerRemovePositiveTest {
@@ -33,9 +32,6 @@ public class BurgerRemovePositiveTest {
     private Ingredient thirdIngredient;
 
     private Burger burger;
-
-    @Rule
-    public ErrorCollector errorCollector = new ErrorCollector();
 
     public BurgerRemovePositiveTest(String scenarioName, int removeIndex, int[] expectedIndices) {
         this.scenarioName = scenarioName;
@@ -62,25 +58,22 @@ public class BurgerRemovePositiveTest {
     }
 
     @Test
-    public void removeIngredientShouldDecreaseSizeAndRemoveCorrectIngredient() {
+    public void removeIngredientShouldDecreaseSize() {
+        burger.removeIngredient(removeIndex);
+
+        assertEquals(expectedIndices.length, burger.getIngredients().size());
+    }
+
+    @Test
+    public void removeIngredientShouldRemoveCorrectIngredient() {
         Ingredient[] allIngredients = {firstIngredient, secondIngredient, thirdIngredient};
 
         burger.removeIngredient(removeIndex);
 
         List<Ingredient> result = burger.getIngredients();
 
-        errorCollector.checkThat(
-                "Size should decrease after removal",
-                result.size(),
-                is(expectedIndices.length)
-        );
-
         for (int i = 0; i < expectedIndices.length; i++) {
-            errorCollector.checkThat(
-                    "Position " + i + " should contain ingredient at original index " + expectedIndices[i],
-                    result.get(i),
-                    is(allIngredients[expectedIndices[i]])
-            );
+            assertSame(allIngredients[expectedIndices[i]], result.get(i));
         }
     }
 }
