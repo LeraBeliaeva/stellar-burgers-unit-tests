@@ -164,7 +164,7 @@ public void exampleTest() {
 
 ## 📈 Результаты
 
-- Все 64 теста проходят успешно
+- Все 97 тестов проходят успешно
 - 100% покрытие бизнес-классов (Burger, Bun, Ingredient, IngredientType)
 - Нет дублирования кода в тестах
 - Используются best practices JUnit и Mockito
