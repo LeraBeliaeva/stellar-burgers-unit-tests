@@ -1,7 +1,9 @@
 package praktikum;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -9,8 +11,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 @RunWith(Parameterized.class)
 public class IngredientTest {
@@ -23,6 +25,9 @@ public class IngredientTest {
     private final float price;
 
     private Ingredient ingredient;
+
+    @Rule
+    public ErrorCollector errorCollector = new ErrorCollector();
 
     public IngredientTest(String scenarioName, IngredientType type, String name, float price) {
         this.scenarioName = scenarioName;
@@ -51,19 +56,25 @@ public class IngredientTest {
 
     @Test
     public void ingredientShouldReturnCorrectProperties() {
-        assertNotNull("Ingredient should not be null", ingredient);
-
-        assertEquals("Scenario: " + scenarioName + " - Type mismatch",
-                type, ingredient.getType());
-        assertEquals("Scenario: " + scenarioName + " - Name mismatch",
-                name, ingredient.getName());
-        assertEquals("Scenario: " + scenarioName + " - Price mismatch",
-                price, ingredient.getPrice(), DELTA);
-    }
-
-    @Test
-    public void ingredientPropertiesShouldNotBeNull() {
-        assertNotNull("Type should not be null", ingredient.getType());
-        assertNotNull("Name should not be null", ingredient.getName());
+        errorCollector.checkThat(
+                "Ingredient should not be null",
+                ingredient,
+                notNullValue()
+        );
+        errorCollector.checkThat(
+                "Scenario: " + scenarioName + " - Type mismatch",
+                ingredient.getType(),
+                is(type)
+        );
+        errorCollector.checkThat(
+                "Scenario: " + scenarioName + " - Name mismatch",
+                ingredient.getName(),
+                is(name)
+        );
+        errorCollector.checkThat(
+                "Scenario: " + scenarioName + " - Price mismatch",
+                ingredient.getPrice(),
+                is(price)
+        );
     }
 }

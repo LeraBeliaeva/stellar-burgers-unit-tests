@@ -1,7 +1,9 @@
 package praktikum;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -12,8 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(Parameterized.class)
 public class BurgerMovePositiveTest {
@@ -26,16 +27,19 @@ public class BurgerMovePositiveTest {
     private final int[] expectedOrder;
 
     @Mock
-    private Ingredient ingredient0;
+    private Ingredient firstIngredient;
 
     @Mock
-    private Ingredient ingredient1;
+    private Ingredient secondIngredient;
 
     @Mock
-    private Ingredient ingredient2;
+    private Ingredient thirdIngredient;
 
     private Burger burger;
     private Ingredient[] allIngredients;
+
+    @Rule
+    public ErrorCollector errorCollector = new ErrorCollector();
 
     public BurgerMovePositiveTest(String scenarioName, int fromIndex, int toIndex, int[] expectedOrder) {
         this.scenarioName = scenarioName;
@@ -61,19 +65,11 @@ public class BurgerMovePositiveTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         burger = new Burger();
-        allIngredients = new Ingredient[]{ingredient0, ingredient1, ingredient2};
+        allIngredients = new Ingredient[]{firstIngredient, secondIngredient, thirdIngredient};
 
         for (Ingredient ingredient : allIngredients) {
             burger.addIngredient(ingredient);
         }
-    }
-
-    @Test
-    public void moveIngredientShouldKeepSize() {
-        burger.moveIngredient(fromIndex, toIndex);
-
-        assertEquals("Size should stay the same after moving",
-                INGREDIENTS_COUNT, burger.getIngredients().size());
     }
 
     @Test
@@ -82,23 +78,34 @@ public class BurgerMovePositiveTest {
 
         List<Ingredient> result = burger.getIngredients();
 
-        assertEquals("Result size should match expected order",
-                expectedOrder.length, result.size());
+        errorCollector.checkThat(
+                "Size should stay the same after moving",
+                result.size(),
+                is(INGREDIENTS_COUNT)
+        );
+
+        errorCollector.checkThat(
+                "Result size should match expected order",
+                result.size(),
+                is(expectedOrder.length)
+        );
 
         for (int i = 0; i < expectedOrder.length; i++) {
-            assertSame("Position " + i + " should contain ingredient from original index " + expectedOrder[i],
-                    allIngredients[expectedOrder[i]], result.get(i));
+            errorCollector.checkThat(
+                    "Position " + i + " should contain ingredient from original index " + expectedOrder[i],
+                    result.get(i),
+                    is(allIngredients[expectedOrder[i]])
+            );
         }
     }
 
     @Test
-    public void moveIngredientShouldRemoveFromOldPosition() {
+    public void moveIngredientShouldKeepSizeAndPosition() {
         burger.moveIngredient(fromIndex, toIndex);
 
         List<Ingredient> result = burger.getIngredients();
         Ingredient movedIngredient = allIngredients[fromIndex];
 
-        // Проверяем что перемещённый ингредиент появляется только один раз и на правильной позиции
         int occurrences = 0;
         int actualPosition = -1;
 
@@ -109,7 +116,15 @@ public class BurgerMovePositiveTest {
             }
         }
 
-        assertEquals("Moved ingredient should appear exactly once", 1, occurrences);
-        assertEquals("Moved ingredient should be at position " + toIndex, toIndex, actualPosition);
+        errorCollector.checkThat(
+                "Moved ingredient should appear exactly once",
+                occurrences,
+                is(1)
+        );
+        errorCollector.checkThat(
+                "Moved ingredient should be at position " + toIndex,
+                actualPosition,
+                is(toIndex)
+        );
     }
 }

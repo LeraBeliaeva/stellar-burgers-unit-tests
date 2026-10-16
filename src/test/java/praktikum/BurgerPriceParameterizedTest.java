@@ -17,34 +17,33 @@ import static org.mockito.Mockito.when;
 public class BurgerPriceParameterizedTest {
 
     private static final float DELTA = 0.001f;
-    private static final int BUNS_COUNT = 2;
 
     private final String scenarioName;
     private final float bunPrice;
-    private final float ingredient1Price;
-    private final float ingredient2Price;
+    private final float firstIngredientPrice;
+    private final float secondIngredientPrice;
     private final float expectedPrice;
 
     @Mock
     private Bun bun;
 
     @Mock
-    private Ingredient ingredient1;
+    private Ingredient firstIngredient;
 
     @Mock
-    private Ingredient ingredient2;
+    private Ingredient secondIngredient;
 
     private Burger burger;
 
     public BurgerPriceParameterizedTest(String scenarioName,
                                         float bunPrice,
-                                        float ingredient1Price,
-                                        float ingredient2Price,
+                                        float firstIngredientPrice,
+                                        float secondIngredientPrice,
                                         float expectedPrice) {
         this.scenarioName = scenarioName;
         this.bunPrice = bunPrice;
-        this.ingredient1Price = ingredient1Price;
-        this.ingredient2Price = ingredient2Price;
+        this.firstIngredientPrice = firstIngredientPrice;
+        this.secondIngredientPrice = secondIngredientPrice;
         this.expectedPrice = expectedPrice;
     }
 
@@ -69,12 +68,12 @@ public class BurgerPriceParameterizedTest {
     @Test
     public void getPriceShouldReturnCorrectPrice() {
         when(bun.getPrice()).thenReturn(bunPrice);
-        when(ingredient1.getPrice()).thenReturn(ingredient1Price);
-        when(ingredient2.getPrice()).thenReturn(ingredient2Price);
+        when(firstIngredient.getPrice()).thenReturn(firstIngredientPrice);
+        when(secondIngredient.getPrice()).thenReturn(secondIngredientPrice);
 
         burger.setBuns(bun);
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
 
         float actualPrice = burger.getPrice();
         assertEquals("Scenario: " + scenarioName, expectedPrice, actualPrice, DELTA);

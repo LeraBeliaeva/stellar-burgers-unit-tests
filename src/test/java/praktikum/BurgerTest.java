@@ -1,13 +1,18 @@
 package praktikum;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BurgerTest {
@@ -16,23 +21,25 @@ public class BurgerTest {
     private static final int BUNS_COUNT = 2;
 
     private static final float BUN_PRICE = 100.0f;
-    private static final float INGREDIENT_1_PRICE = 50.0f;
-    private static final float INGREDIENT_2_PRICE = 75.0f;
+    private static final float FIRST_INGREDIENT_PRICE = 50.0f;
+    private static final float SECOND_INGREDIENT_PRICE = 75.0f;
 
     private static final String BUN_NAME = "black bun";
-    private static final String INGREDIENT_1_NAME = "hot sauce";
-    private static final String INGREDIENT_2_NAME = "cutlet";
+    private static final String FIRST_INGREDIENT_NAME = "hot sauce";
 
     @Mock
     private Bun bun;
 
     @Mock
-    private Ingredient ingredient1;
+    private Ingredient firstIngredient;
 
     @Mock
-    private Ingredient ingredient2;
+    private Ingredient secondIngredient;
 
     private Burger burger;
+
+    @Rule
+    public ErrorCollector errorCollector = new ErrorCollector();
 
     @Before
     public void setUp() {
@@ -45,14 +52,14 @@ public class BurgerTest {
         when(bun.getPrice()).thenReturn(BUN_PRICE);
     }
 
-    private void setupIngredient1Mock() {
-        when(ingredient1.getName()).thenReturn(INGREDIENT_1_NAME);
-        when(ingredient1.getType()).thenReturn(IngredientType.SAUCE);
-        when(ingredient1.getPrice()).thenReturn(INGREDIENT_1_PRICE);
+    private void setupFirstIngredientMock() {
+        when(firstIngredient.getName()).thenReturn(FIRST_INGREDIENT_NAME);
+        when(firstIngredient.getType()).thenReturn(IngredientType.SAUCE);
+        when(firstIngredient.getPrice()).thenReturn(FIRST_INGREDIENT_PRICE);
     }
 
-    private void setupIngredient2PriceMock() {
-        when(ingredient2.getPrice()).thenReturn(INGREDIENT_2_PRICE);
+    private void setupSecondIngredientPriceMock() {
+        when(secondIngredient.getPrice()).thenReturn(SECOND_INGREDIENT_PRICE);
     }
 
     @Test
@@ -63,49 +70,65 @@ public class BurgerTest {
 
     @Test
     public void addIngredientShouldAddIngredient() {
-        burger.addIngredient(ingredient1);
-        assertEquals(ingredient1, burger.getIngredients().get(0));
+        burger.addIngredient(firstIngredient);
+        assertEquals(firstIngredient, burger.getIngredients().get(0));
     }
 
     @Test
     public void addIngredientShouldIncreaseSize() {
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
         assertEquals(2, burger.getIngredients().size());
     }
 
     @Test
     public void removeIngredientShouldDecreaseSizeAndRemoveCorrectOne() {
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
 
         burger.removeIngredient(0);
 
-        assertEquals(1, burger.getIngredients().size());
-        assertEquals(ingredient2, burger.getIngredients().get(0));
+        errorCollector.checkThat(
+                "Size should decrease to 1",
+                burger.getIngredients().size(),
+                is(1)
+        );
+        errorCollector.checkThat(
+                "The remaining ingredient should be secondIngredient",
+                burger.getIngredients().get(0),
+                is(secondIngredient)
+        );
     }
 
     @Test
     public void moveIngredientShouldChangeOrder() {
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
 
         burger.moveIngredient(0, 1);
 
-        assertEquals(ingredient2, burger.getIngredients().get(0));
-        assertEquals(ingredient1, burger.getIngredients().get(1));
+        errorCollector.checkThat(
+                "Position 0 should contain secondIngredient",
+                burger.getIngredients().get(0),
+                is(secondIngredient)
+        );
+        errorCollector.checkThat(
+                "Position 1 should contain firstIngredient",
+                burger.getIngredients().get(1),
+                is(firstIngredient)
+        );
     }
 
     @Test
     public void getPriceShouldCalculateCorrectly() {
-        setupIngredient1Mock();
-        setupIngredient2PriceMock();
+        setupFirstIngredientMock();
+        setupSecondIngredientPriceMock();
 
         burger.setBuns(bun);
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
+        burger.addIngredient(firstIngredient);
+        burger.addIngredient(secondIngredient);
 
-        float expected = BUN_PRICE * BUNS_COUNT + INGREDIENT_1_PRICE + INGREDIENT_2_PRICE;
+        float expected = BUN_PRICE * BUNS_COUNT + FIRST_INGREDIENT_PRICE + SECOND_INGREDIENT_PRICE;
         assertEquals(expected, burger.getPrice(), DELTA);
     }
 
@@ -136,12 +159,12 @@ public class BurgerTest {
 
     @Test
     public void getReceiptShouldContainIngredientName() {
-        setupIngredient1Mock();
+        setupFirstIngredientMock();
         burger.setBuns(bun);
-        burger.addIngredient(ingredient1);
+        burger.addIngredient(firstIngredient);
 
         String receipt = burger.getReceipt();
-        assertTrue(receipt.contains(INGREDIENT_1_NAME));
+        assertTrue(receipt.contains(FIRST_INGREDIENT_NAME));
     }
 
     @Test
@@ -154,12 +177,12 @@ public class BurgerTest {
 
     @Test
     public void getReceiptShouldContainCorrectPrice() {
-        setupIngredient1Mock();
+        setupFirstIngredientMock();
         burger.setBuns(bun);
-        burger.addIngredient(ingredient1);
+        burger.addIngredient(firstIngredient);
 
         String receipt = burger.getReceipt();
-        float expectedPrice = BUN_PRICE * BUNS_COUNT + INGREDIENT_1_PRICE;
+        float expectedPrice = BUN_PRICE * BUNS_COUNT + FIRST_INGREDIENT_PRICE;
         String expectedPriceFormat = String.format("Price: %.1f", expectedPrice);
 
         assertTrue(receipt.contains(expectedPriceFormat));

@@ -21,16 +21,15 @@ public class BurgerMoveNegativeTest {
     private final int toIndex;
 
     @Mock
-    private Ingredient ingredient0;
+    private Ingredient firstIngredient;
 
     @Mock
-    private Ingredient ingredient1;
+    private Ingredient secondIngredient;
 
     @Mock
-    private Ingredient ingredient2;
+    private Ingredient thirdIngredient;
 
     private Burger burger;
-    private Ingredient[] allIngredients;
 
     public BurgerMoveNegativeTest(String scenarioName, int fromIndex, int toIndex) {
         this.scenarioName = scenarioName;
@@ -53,7 +52,7 @@ public class BurgerMoveNegativeTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         burger = new Burger();
-        allIngredients = new Ingredient[]{ingredient0, ingredient1, ingredient2};
+        Ingredient[] allIngredients = {firstIngredient, secondIngredient, thirdIngredient};
 
         for (Ingredient ingredient : allIngredients) {
             burger.addIngredient(ingredient);

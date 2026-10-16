@@ -22,16 +22,15 @@ public class BurgerRemoveNegativeTest {
     private final int invalidIndex;
 
     @Mock
-    private Ingredient ingredient0;
+    private Ingredient firstIngredient;
 
     @Mock
-    private Ingredient ingredient1;
+    private Ingredient secondIngredient;
 
     @Mock
-    private Ingredient ingredient2;
+    private Ingredient thirdIngredient;
 
     private Burger burger;
-    private Ingredient[] allIngredients;
 
     public BurgerRemoveNegativeTest(String scenarioName, int invalidIndex) {
         this.scenarioName = scenarioName;
@@ -52,7 +51,7 @@ public class BurgerRemoveNegativeTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         burger = new Burger();
-        allIngredients = new Ingredient[]{ingredient0, ingredient1, ingredient2};
+        Ingredient[] allIngredients = {firstIngredient, secondIngredient, thirdIngredient};
 
         for (Ingredient ingredient : allIngredients) {
             burger.addIngredient(ingredient);
@@ -77,5 +76,4 @@ public class BurgerRemoveNegativeTest {
         assertEquals("List size should not change after failed removal",
                 originalSize, burger.getIngredients().size());
     }
-
 }
